@@ -12,4 +12,14 @@ EXPOSE 8080
 
 # 5. ¡A comer! (Arrancar el programa)
 # Añade esto para que Spring escuche el puerto que le de Render
-ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
+#ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
+# ETAPA 1: Construcción (Generamos el archivo .jar)
+FROM maven:3.8.5-openjdk-17 AS build
+COPY . .
+RUN mvn clean package -DskipTests
+
+# ETAPA 2: Ejecución (Corremos el archivo .jar generado)
+FROM openjdk:17-jdk-slim
+COPY --from=build /target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app.jar"]
