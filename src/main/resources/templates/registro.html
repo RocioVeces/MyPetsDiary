@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - My Pets Diary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex; 
+			align-items: center; 
+			justify-content: center; 
+			height: 100vh; 
+			margin: 0;
+        }
+        .container {
+            background: white; 
+			padding: 2.5rem; 
+			border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+			width: 100%; 
+			max-width: 380px;
+			text-align: center;
+        }
+        h1 { color: #6c5ce7;
+			 margin-bottom: 1.5rem; }
+			 
+        .form-group { text-align: left;
+			 margin-bottom: 1rem; }
+        label { display: block; 
+			font-weight: 600; 
+			margin-bottom: 5px;
+			 }
+			 
+        input { width: 100%; 
+			padding: 12px; 
+			border: 1px solid #ddd;
+			 border-radius: 8px;
+			  box-sizing: border-box; }
+        button {
+			width: 100%;
+			 padding: 12px; 
+			 background: #6c5ce7; 
+			 color: white;
+			 border: none; 
+			 border-radius: 8px; 
+			 font-weight: 600;
+			  cursor: pointer; 
+			  transition: 0.3s;
+        }
+        button:hover { background: #5b4cc4; }
+        .error { color: #d63031;
+			 background: #fab1a0; 
+			 padding: 10px; 
+			 border-radius: 8px; 
+			 margin-bottom: 1rem;
+			  font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Nueva Cuenta</h1>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        <form th:action="@{/registro}" th:object="${usuario}" method="post">
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" th:field="*{nombre}" required>
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" th:field="*{correo}" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" th:field="*{contrasena}" required>
+            </div>
+            <button type="submit">Empezar aventura</button>
+        </form>
+        <p style="margin-top:1rem; font-size:0.85rem;">¿Ya tienes cuenta? <a th:href="@{/login}" style="color:#6c5ce7; font-weight:600;">Logueate</a></p>
+    </div>
+</body>
+</html>

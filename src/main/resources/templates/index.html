@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - My Pets Diary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); margin: 0; display: flex; }
+        
+        /* Sidebar Izquierda */
+        .sidebar {
+            width: 260px; background: white; height: 100vh; position: fixed;
+            padding: 30px 20px; box-shadow: 4px 0 10px rgba(0,0,0,0.03);
+        }
+        .profile-card {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            padding: 20px; border-radius: 20px; color: white; text-align: center; margin-bottom: 30px;
+        }
+        .profile-card h3 { margin: 10px 0 5px; font-size: 1.1rem; }
+        .profile-card p { font-size: 0.75rem; opacity: 0.9; margin: 0; }
+
+        /* Contenedor Fichas */
+        .main { margin-left: 300px; padding: 40px; width: 100%; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-new { background: #6c5ce7; color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+
+        .grid-fichas { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
+
+        /* Estilo de la Ficha Independiente */
+        .ficha {
+            background: white; border-radius: 25px; padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; position: relative;
+        }
+        .ficha:hover { transform: translateY(-5px); }
+        .ficha-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .badge { background: #eef2ff; color: #6366f1; padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+        
+        .list-citas { list-style: none; padding: 0; margin: 20px 0; }
+        .cita-row {
+            background: #f8fafc; padding: 10px; border-radius: 10px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; font-size: 0.8rem; border: 1px solid #f1f5f9;
+        }
+        
+        /* Mini Formulario dentro de la ficha */
+        .mini-form input {
+            width: 100%; border: 1px solid #eee; padding: 8px; border-radius: 8px;
+            margin-bottom: 5px; font-size: 0.75rem; box-sizing: border-box;
+        }
+        .btn-small { width: 100%; background: #00cec9; color: white; border: none; padding: 7px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-card">
+            <h3 th:text="${usuario.nombre}">Usuario</h3>
+            <p th:text="${usuario.correo}"></p>
+            <br>
+            <a th:href="@{/logout}" style="color:white; font-size: 0.8rem; text-decoration: none; font-weight: 600;">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header-actions">
+            <h1>Mis Mascotas 🐾</h1>
+            <button class="btn-new" onclick="document.getElementById('modalMascota').style.display='block'">+ Nueva Mascota</button>
+        </div>
+
+        <div id="modalMascota" class="ficha" style="display:none; margin-bottom: 30px; border: 2px dashed #6c5ce7;">
+            <form th:action="@{/mascotas/guardar}" th:object="${nuevaMascota}" method="post">
+                <input type="text" th:field="*{nombre}" placeholder="Nombre" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" th:field="*{especie}" placeholder="Especie" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="date" th:field="*{fechaNacimiento}" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <button type="submit" class="btn-new" style="width: 100%;">Crear Ficha</button>
+            </form>
+        </div>
+
+        <div class="grid-fichas">
+            <div class="ficha" th:each="m : ${mascotas}">
+                <div class="ficha-header">
+                    <div>
+                        <h2 th:text="${m.nombre}" style="margin:0;">Caramelo</h2>
+                        <span class="badge" th:text="${m.especie}">Gato</span>
+                    </div>
+                    <a th:href="@{/mascotas/borrar/{id}(id=${m.id})}" style="text-decoration:none; color:#ff7675;">🗑️</a>
+                </div>
+                <p style="font-size: 0.8rem; color: #636e72;">🎂 Cumple: <span th:text="${#temporals.format(m.fechaNacimiento, 'dd/MM/yyyy')}"></span></p>
+                
+                <div class="list-citas">
+                    <div class="cita-row" th:each="c : ${m.citas}">
+                        <span th:text="${c.asunto}">Vacuna</span>
+                        <strong th:text="${#temporals.format(c.fechaCita, 'dd/MM/yyyy')}"></strong>
+                        <a th:href="@{/citas/borrar/{id}(id=${c.id})}" style="color:#ff7675; text-decoration:none;">×</a>
+                    </div>
+                </div>
+
+                <form class="mini-form" th:action="@{/citas/guardar}" method="post">
+                    <input type="hidden" name="mascotaId" th:value="${m.id}">
+                    <input type="text" name="asunto" placeholder="Próxima cita/vacuna" required>
+                    <input type="date" name="fechaCita" required>
+                    <button type="submit" class="btn-small">+ Añadir a Ficha</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

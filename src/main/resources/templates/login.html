@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - My Pets Diary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex; 
+			align-items: center;
+			justify-content: center;
+            height: 100vh; 
+			margin: 0;
+        }
+        .container {
+            background: white; 
+			padding: 2.5rem; 
+			border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+			width: 100%; 
+			max-width: 350px; 
+			text-align: center;
+        }
+        h1 { color: #6c5ce7; 
+			margin-bottom: 1.5rem; }
+			
+        .form-group { text-align: left; 
+			margin-bottom: 1.2rem; }
+        label { display: block;
+			 font-weight: 600; 
+			 margin-bottom: 5px; }
+			 
+        input { width: 100%; 
+			padding: 12px;
+			 border: 1px solid #ddd; 
+			 border-radius: 8px; box-sizing: border-box; }
+        button {
+            width: 100%; 
+			padding: 12px;
+			 background: #6c5ce7;
+			  color: white;
+            border: none; 
+			border-radius: 8px;
+			 font-weight: 600; 
+			 cursor: pointer; 
+			 transition: 0.3s;
+        }
+        button:hover { background: #5b4cc4; }
+        .error { color: #d63031;
+			 background: #fab1a0; 
+			 padding: 10px; 
+			 border-radius: 8px; 
+			 margin-bottom: 1rem; 
+			 font-size: 0.8rem; }
+        .footer-text { margin-top: 1rem; font-size: 0.85rem; }
+        a { color: #6c5ce7; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐶 Hola de nuevo</h1>
+        <div th:if="${param.error}" class="error">Correo o contraseña incorrectos.</div>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label>Correo</label>
+                <input type="email" name="correo" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" required>
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <p class="footer-text">¿Eres nuevo? <a th:href="@{/registro}">Regístrate aquí</a></p>
+    </div>
+</body>
+</html>
