@@ -19,12 +19,12 @@
 #RUN mvn clean package -DskipTests
 
 #render
-# ETAPA 1: Construcción (Maven con Java 17)
+# ETAPA 1: Construcción (Generar el .jar)
 FROM maven:3.8.5-openjdk-17 AS build
 COPY . .
 RUN mvn clean package -DskipTests
 
-# ETAPA 2: Ejecución (Usamos Eclipse Temurin que sí está disponible)
+# ETAPA 2: Ejecución (Cambiamos la línea que daba error)
 FROM eclipse-temurin:17-jdk-jammy
 COPY --from=build /target/*.jar app.jar
 EXPOSE 8080
