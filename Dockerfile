@@ -19,13 +19,17 @@
 #RUN mvn clean package -DskipTests
 
 #render
-# ETAPA 1: Construcción
+# ETAPA 1: Construcción (Generar el .jar)
 FROM maven:3.8.5-openjdk-17 AS build
 COPY . .
 RUN mvn clean package -DskipTests
 
-# ETAPA 2: Ejecución (Usamos Temurin porque OpenJDK-Slim ya no existe)
+# ETAPA 2: Ejecución (Usamos Temurin que es compatible con Render)
 FROM eclipse-temurin:17-jdk-jammy
 COPY --from=build /target/*.jar app.jar
+
+# Exponemos el puerto 8080 (aunque Render usará el suyo)
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+# ¡IMPORTANTE! Esta línea permite que Render asigne el puerto dinámicamente
+ENTRYPOINT ["sh", "-c", "java -jar /app.jar --server.port=${PORT:-8080}"],"-jar","/app.jar"]
